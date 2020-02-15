@@ -31,6 +31,7 @@ fs.readFile("./database.json", (err, data) => {
 
 const saveStatus = (status) => {
   new Promise((resolve, reject) => {
+    console.log("deleting",status)
     fs.writeFile("./database.json", JSON.stringify(status), (err, res) => {
       if (err) {
         reject(err)
