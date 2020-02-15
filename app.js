@@ -6,7 +6,7 @@ const path = require("path")
 const bodyParser = require('body-parser');
 
 //const acceptedStudents = require("./acceptedNames.json")
-let acceptedStudents
+let acceptedStudents = {}
 let tries;
 
 const names = require("./names")
