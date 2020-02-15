@@ -63,6 +63,7 @@ app.get("/api/next-student", async (req, res) => {
   }
 
   await saveStatus({ ids: acceptedStudents, tries })
+  console.log("xxxxxxxxxxxxxxxxxxxxxx")
 
   let foundStudent = false;
   while (!foundStudent) {
@@ -96,6 +97,7 @@ app.post("/api/student-accepted", async (req, res) => {
   acceptedStudents[id] = acceptedStudents[id] + 1
   const data = { ids: acceptedStudents, tries }
   await saveStatus(data);
+  console.log("ACCEPTED")
   res.json({ status: "OK" })
 })
 
@@ -103,6 +105,7 @@ app.post("/api/clear-all-presentations", async (req, res) => {
   const data = { ids: {}, tries }
   acceptedStudents = {};
   await saveStatus(data);
+  console.log("CLEARED")
   res.json({ status: "All-Cleared" })
 })
 
