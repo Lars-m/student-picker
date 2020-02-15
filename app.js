@@ -71,7 +71,7 @@ app.get("/api/next-student", async (req, res) => {
     name = names[index];
     if (acceptedStudents[name.id] < tries) {
       foundStudent = true;
-      acceptedStudents[name.id] = acceptedStudents[name.id] + 1
+      //acceptedStudents[name.id] = acceptedStudents[name.id] + 1
     }
   }
   res.json(name)
