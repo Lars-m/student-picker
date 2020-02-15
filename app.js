@@ -105,7 +105,6 @@ app.post("/api/clear-all-presentations", async (req, res) => {
     acceptedStudents[s] = 0;
   }
   const data = { ids: acceptedStudents, tries }
-  acceptedStudents = {};
   await saveStatus(data);
   console.log("CLEARED")
   res.json({ status: "All-Cleared" })
