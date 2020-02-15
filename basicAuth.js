@@ -13,6 +13,14 @@ const basicAuth = (req, res, next) => {
   res.end('Access denied')
 };
 
+
+/*
+Add a file called userpw.json to the root of the project after cloning with this content:
+{
+  "name":"XXXXXXX",
+  "pass":"YYYYYYY"
+}
+*/
 function check(name, pass) {
   var valid = true
 

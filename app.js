@@ -101,6 +101,7 @@ app.post("/api/student-accepted", async (req, res) => {
 
 app.post("/api/clear-all-presentations", async (req, res) => {
   const data = { ids: {}, tries }
+  acceptedStudents = {};
   await saveStatus(data);
   res.json({ status: "All-Cleared" })
 })
