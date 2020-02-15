@@ -31,7 +31,7 @@ fs.readFile("./database.json", (err, data) => {
 
 const saveStatus = (status) => {
   new Promise((resolve, reject) => {
-    console.log("deleting",status)
+    console.log("deleting", status)
     fs.writeFile("./database.json", JSON.stringify(status), (err, res) => {
       if (err) {
         reject(err)
@@ -55,7 +55,7 @@ app.get("/api/next-student", async (req, res) => {
   //Check if any student have not yeat made a minimum of tries presentations
   let stillMissing = false;
   for (const s in acceptedStudents) {
-    if (acceptedStudents[s] < tries) {
+    if (acceptedStudents[s] <= tries) {
       stillMissing = true;
     }
   }
@@ -64,7 +64,6 @@ app.get("/api/next-student", async (req, res) => {
   }
 
   await saveStatus({ ids: acceptedStudents, tries })
-  console.log("xxxxxxxxxxxxxxxxxxxxxx")
 
   let foundStudent = false;
   while (!foundStudent) {
@@ -98,12 +97,14 @@ app.post("/api/student-accepted", async (req, res) => {
   acceptedStudents[id] = acceptedStudents[id] + 1
   const data = { ids: acceptedStudents, tries }
   await saveStatus(data);
-  console.log("ACCEPTED")
   res.json({ status: "OK" })
 })
 
 app.post("/api/clear-all-presentations", async (req, res) => {
-  const data = { ids: {}, tries }
+  for (const s in acceptedStudents) {
+    acceptedStudents[s] = 0;
+  }
+  const data = { ids: acceptedStudents, tries }
   acceptedStudents = {};
   await saveStatus(data);
   console.log("CLEARED")
