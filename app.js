@@ -5,11 +5,12 @@ const fs = require("fs");
 const path = require("path")
 const bodyParser = require('body-parser');
 
-//const acceptedStudents = require("./acceptedNames.json")
+
 let acceptedStudents = {}
 let tries;
 
 const names = require("./names")
+//const names = require("./names-test")
 
 fs.readFile("./database.json", (err, data) => {
   ({ ids: acceptedStudents, tries } = JSON.parse(data));
@@ -55,15 +56,14 @@ app.get("/api/next-student", async (req, res) => {
   //Check if any student have not yeat made a minimum of tries presentations
   let stillMissing = false;
   for (const s in acceptedStudents) {
-    if (acceptedStudents[s] <= tries) {
+    if (acceptedStudents[s] < tries) {
       stillMissing = true;
     }
   }
   if (!stillMissing) {
     tries = tries + 1;
+    await saveStatus({ ids: acceptedStudents, tries })
   }
-
-  await saveStatus({ ids: acceptedStudents, tries })
 
   let foundStudent = false;
   while (!foundStudent) {
@@ -71,7 +71,6 @@ app.get("/api/next-student", async (req, res) => {
     name = names[index];
     if (acceptedStudents[name.id] < tries) {
       foundStudent = true;
-      //acceptedStudents[name.id] = acceptedStudents[name.id] + 1
     }
   }
   res.json(name)
