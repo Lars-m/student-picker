@@ -41,7 +41,11 @@ function presentationStatus() {
       setUiStatus(false, true)
       document.getElementById("tries").innerHTML = result.tries;
       const rows = result.status.map(n => {
-        return `<tr><td>${n.name}</td><td>${n.presentations}</td></tr>`;
+        return `<tr><td>${n.name}</td><td>
+          <button type="button" class="btn btn-outline-danger btn-sm" 
+                                style="margin-right:2em;font-family:'courier'"> - </button>${n.presentations}
+          <button type="button" class="btn btn-outline-success btn-sm" 
+                                style="margin-left:2em;;font-family:'courier'"> + </button</td></tr>`;
       })
       document.getElementById("tbody").innerHTML = rows.join("");
     })
