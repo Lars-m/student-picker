@@ -25,6 +25,32 @@ function setUiStatus(showCurrentStudent, showStatusDiv) {
   }
 }
 
+async function updatePresentations(evt) {
+  evt.preventDefault();
+  evt.stopPropagation();
+  if (evt.target.type !== "button") {
+    console.log("RETURN")
+    return
+  }
+  const id = evt.target.id;
+  const isIncrement = evt.target.innerHTML.includes("+");
+  const inc = isIncrement ? 1 : -1;
+  const body = { id: evt.target.id, inc };
+
+  const options = {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  }
+  await fetch("api/increment-presentations", options).then(r => r.json())
+  presentationStatus();
+
+}
+
 function presentationStatus() {
   setUiStatus(false, false);
   currentStudent = {};
@@ -42,11 +68,13 @@ function presentationStatus() {
       document.getElementById("tries").innerHTML = result.tries;
       const rows = result.status.map(n => {
         return `<tr><td>${n.name}</td><td>
-          <button type="button" class="btn btn-outline-danger btn-sm" 
-                                style="margin-right:2em;font-family:'courier'"> - </button>${n.presentations}
-          <button type="button" class="btn btn-outline-success btn-sm" 
-                                style="margin-left:2em;;font-family:'courier'"> + </button</td></tr>`;
+          <button type="button" id=${n.id}
+               class="btn btn-outline-danger btn-sm" style="margin-right:2.5em;font-family:'courier'"> - </button>
+               <span style="width: 50px;display: inline-block;text-align:center">${n.presentations}</span>
+          <button type="button" id=${n.id}
+                class="btn btn-outline-success btn-sm" style="margin-left:2.5em;;font-family:'courier'"> + </button</td></tr>`;
       })
+      document.getElementById("tbody").onclick = updatePresentations;
       document.getElementById("tbody").innerHTML = rows.join("");
     })
 }

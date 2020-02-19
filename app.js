@@ -32,7 +32,6 @@ fs.readFile("./database.json", (err, data) => {
 
 const saveStatus = (status) => {
   new Promise((resolve, reject) => {
-    console.log("deleting", status)
     fs.writeFile("./database.json", JSON.stringify(status), (err, res) => {
       if (err) {
         reject(err)
@@ -80,7 +79,7 @@ app.get("/api/next-student", async (req, res) => {
 
 app.get("/api/presentation-status", (req, res) => {
   const status = names.map(name => {
-    const student = { name: name.name, presentations: 0 }
+    const student = { id: name.id, name: name.name, presentations: 0 }
     if (acceptedStudents[name.id]) {
       student.presentations = acceptedStudents[name.id];
     }
@@ -94,6 +93,16 @@ app.post("/api/student-accepted", async (req, res) => {
   const acceptedStudent = req.body;
   const id = acceptedStudent.id;
   acceptedStudents[id] = acceptedStudents[id] + 1
+  const data = { ids: acceptedStudents, tries }
+  await saveStatus(data);
+  res.json({ status: "OK" })
+})
+
+app.post("/api/increment-presentations", async (req, res) => {
+  const body = req.body;
+  const id = body.id;
+  const inc = body.inc;
+  acceptedStudents[id] = acceptedStudents[id] + inc
   const data = { ids: acceptedStudents, tries }
   await saveStatus(data);
   res.json({ status: "OK" })
