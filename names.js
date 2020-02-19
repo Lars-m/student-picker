@@ -10,7 +10,6 @@ module.exports = [
   { "id": "cph-ck209", "name": "Christian Ambjørn Kehr" },
   { "id": "cph-cf124", "name": "Claus Mikkelsen Findinge" },
   { "id": "cph-ft36", "name": "Frederik Elbo Thorup" },
-  { "id": "cph-fb87", "name": "Frederik Reimers Braagaard" },
   { "id": "cph-jb361", "name": "Jens Ohlendorff Brønd" },
   { "id": "cph-mb346", "name": "Mads Bredal Brandt" },
   { "id": "cph-mw202", "name": "Malthe Stefan Woschek" },
@@ -20,7 +19,6 @@ module.exports = [
   { "id": "cph-ml596", "name": "Mikkel Skott Lind" },
   { "id": "cph-nl163", "name": "Nina Lisakowski" },
   { "id": "cph-ol38", "name": "Oscar Nils Laurberg" },
-  { "id": "cph-ry6", "name": "Rikke Elnif Manniche Yoon" },
   { "id": "cph-sa343", "name": "Søren Due Andersen" },
   { "id": "cph-tb193", "name": "Tobias Anker Boldt-Jørgensen" }
 ]
