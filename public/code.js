@@ -51,8 +51,12 @@ async function updatePresentations(evt) {
 
 }
 
-function presentationStatus() {
+function onPresentationStatus() {
   setUiStatus(false, false);
+  presentationStatus();
+}
+
+function presentationStatus() {
   currentStudent = {};
   const options = {
     method: 'GET',
@@ -74,7 +78,6 @@ function presentationStatus() {
           <button type="button" id=${n.id}
                 class="btn btn-outline-success btn-sm" style="margin-left:2.5em;;font-family:'courier'"> + </button</td></tr>`;
       })
-      document.getElementById("tbody").onclick = updatePresentations;
       document.getElementById("tbody").innerHTML = rows.join("");
     })
 }
@@ -170,6 +173,8 @@ function studentAccepts() {
 
 document.getElementById("btn-next").onclick = nextStudent;
 document.getElementById("bnt-accept").onclick = studentAccepts;
-document.getElementById("btn-status").onclick = presentationStatus;
+document.getElementById("btn-status").onclick = onPresentationStatus;
 document.getElementById("btn-clear-all").onclick = clearAllPresentations;
 document.getElementById("btn-inc").onclick = incrementAllowedPresentations;
+
+document.getElementById("tbody").onclick = updatePresentations;
