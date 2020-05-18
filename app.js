@@ -4,18 +4,20 @@ const basicAuth = require("./basicAuth")
 const fs = require("fs");
 const path = require("path")
 const bodyParser = require('body-parser');
+const settings = require("./settings")
 
 
 let acceptedStudents = {}
 let tries;
 
-const names = require("./names")
+const names = require("./questions")
+//const names = require("./names")
 //const names = require("./names-test")
 
 fs.readFile("./database.json", (err, data) => {
   ({ ids: acceptedStudents, tries } = JSON.parse(data));
   //Initialize "database" with students from the original list
-  //Shoul only happen ONCE
+  //Should only happen ONCE
   if (Object.keys(acceptedStudents).length != names.length) {
     console.log("Initializing")
     names.forEach(name => {
@@ -49,6 +51,8 @@ app.use('/', express.static(path.join(__dirname, './public')));
 
 
 app.get('/', (req, res) => res.end("<h2>Demo</h2>"));
+
+app.get('/api/settings', (req, res) => res.json(settings));
 
 app.get("/api/next-student", async (req, res) => {
   let name;
@@ -112,14 +116,22 @@ app.post("/api/clear-all-presentations", async (req, res) => {
   for (const s in acceptedStudents) {
     acceptedStudents[s] = 0;
   }
+  tries = settings.defaultValueForAllowed || 1;
   const data = { ids: acceptedStudents, tries }
   await saveStatus(data);
-  console.log("CLEARED")
   res.json({ status: "All-Cleared" })
 })
 
 app.post("/api/increase-allowed-presentations", async (req, res) => {
   tries = tries + 1;
+  const data = { ids: acceptedStudents, tries }
+  await saveStatus(data);
+  res.json({ tries })
+})
+app.post("/api/decrement-allowed-presentations", async (req, res) => {
+  if (tries > 1) {
+    tries = tries - 1;
+  }
   const data = { ids: acceptedStudents, tries }
   await saveStatus(data);
   res.json({ tries })

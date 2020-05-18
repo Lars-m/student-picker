@@ -3,11 +3,62 @@ let currentStudent = {};
 let divCurrentStudent = document.getElementById("div-accepted");
 let divStatus = document.getElementById("div-status");
 let btnAccept = document.getElementById("bnt-accept");
+let btnClear = document.getElementById("btn-clear")
 let student = document.getElementById("student");
+let btnNext = document.getElementById("btn-next");
+let btnStatus = document.getElementById("btn-status");
+
 let interValClear;
 let dotCount = 0;
+let showClearBtn = false;
+let requiresAccept = true;
+
+(function adjustSettings() {
+  fetch("/api/settings").
+    then(res => res.json()).
+    then(settings => {
+      console.log(settings)
+      if (settings.title) {
+        document.getElementById("title").innerHTML = settings.title;
+      }
+      if (settings.getText) {
+        btnNext.innerHTML = settings.getText;
+      }
+      if (settings.statusBtnText) {
+        btnStatus.innerHTML = settings.statusBtnText;
+      }
+      if (settings.statusTitle) {
+        document.getElementById("statusHeader").innerHTML = settings.statusTitle;
+      }
+      if (settings.tableHeader1) {
+        document.getElementById("th-col1").innerHTML = settings.tableHeader1;
+      }
+      if (settings.tableHeader2) {
+        document.getElementById("th-col2").innerHTML = settings.tableHeader2;
+      }
+      if (settings.statusText) {
+        document.getElementById("info-for-status-page").innerHTML = settings.statusText;
+      }
+      showClearBtn = settings.showClearBtn
+      requiresAccept = settings.requiresAccept;
+
+
+
+
+      btnClear.style.display = showClearBtn ? "inline-block" : "none"
+    })
+})()
+
+
+function clearStudentStyles(marginTop, fontSize) {
+  student.style.fontSize = fontSize + "em"
+  student.style.marginTop = marginTop + "px";
+}
 
 function setUiStatus(showCurrentStudent, showStatusDiv) {
+
+
+
   if (showCurrentStudent && !showStatusDiv) {
     divCurrentStudent.style.display = "block";
     btnAccept.style.display = "block";
@@ -117,8 +168,29 @@ function incrementAllowedPresentations() {
       document.getElementById("tbody").innerHTML = "";
     })
 }
+function decrementAllowedPresentations() {
+  setUiStatus(false, false);
+  currentStudent = {};
+  const options = {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
+  fetch("api/decrement-allowed-presentations", options).then(r => r.json())
+    .then(status => {
+      setUiStatus(false, false)
+      document.getElementById("tbody").innerHTML = "";
+    })
+}
 
 function nextStudent() {
+  if (interValClear) {
+    //Cannot request new, while 'animation' is running"
+    return
+  }
   setUiStatus(false, false)
   currentStudent = {};
   student.style.marginTop = 0;
@@ -137,10 +209,15 @@ function nextStudent() {
       currentStudent = d;
       student.innerHTML = d.name;
       setUiStatus(true, false)
+      if (!requiresAccept) {
+        setTimeout(() => btnAccept.click(), 0)
+      }
 
     })
 }
+
 function studentAccepts() {
+
   let div = document.getElementById("div-accepted");
 
   const options = {
@@ -157,15 +234,21 @@ function studentAccepts() {
       dotCount = 0;
       btnAccept.style.display = "none"
       let marginTop = 0;
+      let fontSize = 1.5;
+      clearStudentStyles(marginTop, fontSize);
+
       interValClear = setInterval(() => {
         let val = student.innerHTML;
-        val = dotCount === 0 ? "&#x2192;  " + val : "&#x2192;" + val;
+        //val = dotCount === 0 ? "&#x2192;  " + val : "&#x2192;" + val;
         student.innerHTML = val;
         marginTop += 10;
+        fontSize += 0.5;
         student.style.marginTop = marginTop + "px";
+        student.style.fontSize = fontSize + "em"
         dotCount++;
         if (dotCount === 10) {
           clearInterval(interValClear);
+          interValClear = null
         }
       }, 50)
     })
@@ -173,8 +256,14 @@ function studentAccepts() {
 
 document.getElementById("btn-next").onclick = nextStudent;
 document.getElementById("bnt-accept").onclick = studentAccepts;
-document.getElementById("btn-status").onclick = onPresentationStatus;
+btnStatus.onclick = onPresentationStatus;
 document.getElementById("btn-clear-all").onclick = clearAllPresentations;
 document.getElementById("btn-inc").onclick = incrementAllowedPresentations;
+document.getElementById("btn-dec").onclick = decrementAllowedPresentations;
+btnClear.onclick = () => {
+  clearStudentStyles(0, 1.5);
+
+  student.innerHTML = ""
+};
 
 document.getElementById("tbody").onclick = updatePresentations;
