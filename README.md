@@ -13,3 +13,5 @@ Obviously this file is also git-ignored
 
 You need to provide ownership for your node-user for, as minimum, database.json
 Alternatively, just to the full folder: chown -R USER_NAME ./student-picker
+
+Unless this is meant for picking students for review, you should add a settings.js file to customize the UI to your needs.
